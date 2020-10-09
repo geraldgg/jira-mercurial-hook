@@ -1,5 +1,8 @@
 ## Hook for integrating with Jira
 
+    sudo pip install atlassian-python-api
+    sudo pip install brotli
+
 This hook extension adds comments on issues in Jira when changesets
 that refer to issue by Jira ID are seen. The comment is formatted using
 the Mercurial template mechanism.
