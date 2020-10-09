@@ -14,6 +14,7 @@ are made under the given username or the user associated with the apikey in jira
 To use this extension you'll need the following modules installed :
 
     sudo pip install atlassian-python-api
+    sudo pip install mercurial
     sudo pip install brotli
     sudo pip install simplejson
 
