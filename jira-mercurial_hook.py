@@ -123,20 +123,28 @@ try:
     from mercurial.i18n import _
     from mercurial.node import short
     from mercurial import (
-        cmdutil,
         configitems,
         error,
         mail,
         registrar,
         url,
-        util,
-        logcmdutil
+        util
     )
 except Exception as e:
     print("Exception:" + str(e))
     print('-' * 60)
     traceback.print_exc(file=sys.stdout)
     print('-' * 60)
+
+try:
+    # mercurial >= 4.6
+    from mercurial import logcmdutil
+    changesettemplater = logcmdutil.changesettemplater
+    templatespec = logcmdutil.templatespec
+except:
+    from mercurial import cmdutil
+    changesettemplater = cmdutil.changeset_templater
+    templatespec = cmdutil.logtemplatespec
 
 # Note for extension authors: ONLY specify testedwith = 'ships-with-hg-core' for
 # extensions which SHIP WITH MERCURIAL. Non-mainline extensions should
@@ -336,8 +344,8 @@ class jiraaccess(object):
 
         self.ui.debug(_('bug=%s\n'%str(bug)))
 
-        spec = logcmdutil.templatespec(tmpl, mapfile)
-        t = logcmdutil.changesettemplater(self.ui, self.repo, spec, False, None, False)
+        spec = templatespec(tmpl, mapfile)
+        t = changesettemplater(self.ui, self.repo, spec, False, None, False)
         self.ui.pushbuffer()
         t.show(ctx,
                changes=ctx.changeset(),

@@ -1,8 +1,5 @@
 ## Hook for integrating with Jira
 
-    sudo pip install atlassian-python-api
-    sudo pip install brotli
-
 This hook extension adds comments on issues in Jira when changesets
 that refer to issue by Jira ID are seen. The comment is formatted using
 the Mercurial template mechanism.
@@ -13,6 +10,14 @@ hours spent working on the bug. Bugs can also be marked fixed.
 Access is done via the atlassian python api (REST-API) and requires
 a jira username and api key specified in the configuration. Comments
 are made under the given username or the user associated with the apikey in jira.
+
+To use this extension you'll need the following modules installed :
+
+    sudo pip install atlassian-python-api
+    sudo pip install brotli
+    sudo pip install simplejson
+
+It has been tested with python2.7 and Mercurial 4.5.3, and python3.8 and Mercurial 5.5.2
 
 Configuration items common to all access modes:
 
