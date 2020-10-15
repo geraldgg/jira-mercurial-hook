@@ -108,12 +108,13 @@ Activating the extension::
 
 import sys, traceback, re, os
 
-sys.path.append("/usr/lib/python3.8/dist-packages")
-sys.path.append('/usr/lib/python38.zip')
-sys.path.append('/usr/lib/python3.8')
-sys.path.append('/usr/lib/python3.8/lib-dynload')
-sys.path.append('/usr/local/lib/python3.8/dist-packages')
-sys.path.append('/usr/lib/python3/dist-packages')
+pythonversion = sys.version[0:3]
+
+sys.path.append("/usr/lib/python%s/dist-packages"%pythonversion)
+sys.path.append('/usr/lib/python%s'%pythonversion)
+sys.path.append('/usr/lib/python%s/lib-dynload'%pythonversion)
+sys.path.append('/usr/local/lib/python%s/dist-packages'%pythonversion)
+sys.path.append('/usr/lib/python%s/dist-packages'%sys.version[0])
 sys.path.append(os.path.dirname(__file__))
 
 try:
