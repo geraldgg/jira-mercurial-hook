@@ -60,10 +60,10 @@ jira.template
           'Branch : {branch}'
 
 jira.strip
-  The number of path separator characters to strip from the front of
+  The number of characters to strip from the front of
   the Mercurial repository path (``{root}`` in templates) to produce
   ``{webroot}``. For example, a repository with ``{root}``
-  ``/var/local/my-project`` with a strip of 2 gives a value for
+  ``/var/local/my-project`` with a strip of 11 gives a value for
   ``{webroot}`` of ``my-project``. Default 0.
 
 web.baseurl
@@ -101,7 +101,7 @@ Activating the extension::
     url=https://myjira.atlassian.net/
     useremail=user@company.com
     apikey=123456798ABCDEF
-    strip=5
+    strip=23
     template = {desc|escape}\n\n------\nAuthor : {author}\nChangeset : {hgweb}/{webroot}/rev/{node|short}\nBranch : {branch}
 
 '''
@@ -110,10 +110,13 @@ import sys, traceback, re, os
 
 pythonversion = sys.version[0:3]
 
-sys.path.append("/usr/lib/python%s/dist-packages"%pythonversion)
 sys.path.append('/usr/lib/python%s'%pythonversion)
+sys.path.append('/usr/lib/python%s/plat-x86_64-linux-gnu'%pythonversion)
+sys.path.append('/usr/lib/python%s/lib-tk'%pythonversion)
+sys.path.append('/usr/lib/python%s/lib-old'%pythonversion)
 sys.path.append('/usr/lib/python%s/lib-dynload'%pythonversion)
 sys.path.append('/usr/local/lib/python%s/dist-packages'%pythonversion)
+sys.path.append("/usr/lib/python%s/dist-packages"%pythonversion)
 sys.path.append('/usr/lib/python%s/dist-packages'%sys.version[0])
 sys.path.append(os.path.dirname(__file__))
 
@@ -323,13 +326,7 @@ class jiraaccess(object):
             url-safe path.'''
             count = int(config(self.ui, 'strip'))
             root = util.pconvert(root)
-            while count > 0:
-                c = root.find(_('/'))
-                if c == -1:
-                    break
-                root = root[c + 1:]
-                count -= 1
-            return root
+            return root[count:]
 
         mapfile = None
         tmpl = config(self.ui, 'template')
@@ -364,6 +361,10 @@ class jiraaccess(object):
         self.ui.debug(_('  - fix: %s\n' % str(bugattribs['fix'])))
         self.ui.debug(_('  - hours: %s\n' % str(bugattribs['hours'])))
 
+        shours = ""
+        if bugattribs['hours']>0:
+            shours = ', hours: %s' % str(bugattribs['hours'])
+
         try:
             # bugid and comment are binary, we need to decode to convert to str, jira updater only deals with str
             if bugattribs['fix']:
@@ -371,7 +372,7 @@ class jiraaccess(object):
             else:
                 self.jira.update_issue(bugid.decode('utf-8'), comment.decode('utf-8'), bugattribs['hours'])
 
-            self.ui.status(_('Issue %s : Updated\n'%(bugid.decode('utf-8'))))
+            self.ui.status(_('Issue %s : Updated%s\n'%(bugid.decode('utf-8'), shours)))
         except RuntimeError as e:
             self.ui.warn(_("Issue %s : %s\n"%(bugid.decode('utf-8'), str(e))))
         except Exception as e:
